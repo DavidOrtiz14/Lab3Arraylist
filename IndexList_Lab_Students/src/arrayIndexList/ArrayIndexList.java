@@ -3,9 +3,9 @@ package arrayIndexList;
 import indexList.IndexList;
 
 public class ArrayIndexList<E> implements IndexList<E> {
-	private static final int INITCAP = 5; 
-	private static final int CAPTOAR = 5; 
-	private static final int MAXEMPTYPOS = 10; 
+	private static final int INITCAP = 1; 
+	private static final int CAPTOAR = 1; 
+	private static final int MAXEMPTYPOS = 2; 
 	private E[] element; 
 	private int size; 
 
@@ -16,32 +16,48 @@ public class ArrayIndexList<E> implements IndexList<E> {
 	
 
 	public void add(int index, E e) throws IndexOutOfBoundsException {
-		size++;
-		if(index<=(size-1) && index>=0){
-			element[index]=e;
+		if(size()==element.length){
+			changeCapacity(size+1);
 		}
-		else{
+		
+		if(index>=capacity()||index<0){
 			throw new IndexOutOfBoundsException("index:"+index+" is not a valid index.");
+		}
+		
+		else{
+			moveDataOnePositionTR(index,  size-1);
+			element[index]=e;
+			size++;
 		}
 	}
 
 
 	public void add(E e) {
 		if(size==element.length){
-			changeCapacity(size*2);
+			changeCapacity(size+1);
 		}
+		if(size!=0){
 		element[size]=e;
 		size++;
+		}
+		else{
+			size++;
+			element[size]=e;
+			
+		}
 	}
 
 
 	public E get(int index) throws IndexOutOfBoundsException {
-		if(index<=(size-1) && index>=0){
+		if((index<size() && index>=0)){
+			
 			return element[index];
 		}
 		else{
 			throw new IndexOutOfBoundsException("index:"+index+" is not a valid index.");
-		} 
+
+		}
+		
 	}
 
 
@@ -49,29 +65,42 @@ public class ArrayIndexList<E> implements IndexList<E> {
 		return size == 0;
 	}
 
-
+	
 	public E remove(int index) throws IndexOutOfBoundsException {
 		E[] element1 = (E[]) new Object[INITCAP];
-		element1[index]=element[index];
-		if(index<=(size-1) && index>=0){
-		for(int x=index;x<size-1;x++){
-		element[x]=element[x+1];
+		
+		if(capacity()-size()>MAXEMPTYPOS ){
+			changeCapacity(-INITCAP);
 		}
-
-		element[size-1]=null;
-		return element1[index];
+		if(index>size()||index<0){
+			throw new IndexOutOfBoundsException("index:"+index+" is not a valid index.");
 		}
 		
+		
 		else{
+			E c=element[index];
+			moveDataOnePositionTL(index+1,size-1);
+			element[size-1]=null;
+			return c;
 			
-			throw new IndexOutOfBoundsException("index:"+index+" is not a valid index.");
 		}
 	}
 
 
 	public E set(int index, E e) throws IndexOutOfBoundsException {
+		
 	
-		return null;
+		if((index<size() && index>=0)){
+			E c=element[index];
+			element[index]=e;
+			return c;
+			
+		}
+		else{
+			throw new IndexOutOfBoundsException("index:"+index+" is not a valid index.");
+			
+		}
+	
 	}
 
 
@@ -125,6 +154,10 @@ public class ArrayIndexList<E> implements IndexList<E> {
 	public <T1> T1[] toArray(T1[] array) {
 		// TODO as in Exercise 3
 		return null;
+	}
+	public  int capacity(){
+		return element.length;
+		
 	}
 
 }
