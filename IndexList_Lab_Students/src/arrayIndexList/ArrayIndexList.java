@@ -1,5 +1,9 @@
 package arrayIndexList;
 
+
+
+import java.lang.reflect.Array;
+
 import indexList.IndexList;
 
 public class ArrayIndexList<E> implements IndexList<E> {
@@ -36,15 +40,10 @@ public class ArrayIndexList<E> implements IndexList<E> {
 		if(size==element.length){
 			changeCapacity(size+1);
 		}
-		if(size!=0){
+		
 		element[size]=e;
 		size++;
-		}
-		else{
-			size++;
-			element[size]=e;
-			
-		}
+		
 	}
 
 
@@ -81,6 +80,8 @@ public class ArrayIndexList<E> implements IndexList<E> {
 			E c=element[index];
 			moveDataOnePositionTL(index+1,size-1);
 			element[size-1]=null;
+			size--;
+			if(element.length - size > MAXEMPTYPOS){ this.changeCapacity(-CAPTOAR); }
 			return c;
 			
 		}
@@ -145,16 +146,36 @@ public class ArrayIndexList<E> implements IndexList<E> {
 
 	// The following two methods are to be implemented as part of an exercise
 	public Object[] toArray() {
-		// TODO es in Exercise 3
-		return null;
+		Object[] a = new Object[size()]; 
+		for(int x =0; x<size;x++) {
+			a[x]=element[x];
+		}
+		return a;
 	}
 
 
 	@Override
 	public <T1> T1[] toArray(T1[] array) {
-		// TODO as in Exercise 3
-		return null;
+		if(array.length < size()) {
+			array = (T1[]) Array.newInstance(array.getClass().getComponentType(), size());
+		}
+		if(array.length < size()) {
+			for(int y=size();y<array.length;y++) 
+				array[y]= null;
+			
+			for(int z=0;z<size();z++) {
+				if(z>=array.length) {
+					break;
+				}
+				array[z]=(T1) element[z];
+			}
+		}
+		return array;
 	}
+	
+	
+	
+	
 	public  int capacity(){
 		return element.length;
 		
